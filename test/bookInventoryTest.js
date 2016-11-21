@@ -1,7 +1,7 @@
 var request = require('supertest');
 var assert = require('assert');
-var repository = require('../inMemoryStockRepository')();
-var app = require('../app.js')(repository);
+var repository = require('../src/inMemoryStockRepository')();
+var app = require('../src/app.js')(repository);
 
 describe('Book inventory', function () {
     it('allows to stock up the items', function (done) {
