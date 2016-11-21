@@ -7,14 +7,17 @@ var url = 'mongodb://localhost:27017/bookinventory';
 app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
-    MongoClient.connect(url, function(err, db) {
-        console.log('connected to DB');
-        db.close();
-    });
+
     res.send('Hello World!');
 });
 
 app.post('/stock', function (req, res) {
+    MongoClient.connect(url, function (err, db) {
+        console.log('connected to DB');
+
+        db.collection('books').updateOne({isbn: req.body.isbn}, {isbn: req.body.isbn, count: req.body.count}, {upsert: true});
+        db.close();
+    });
     res.json({isbn: req.body.isbn, count: req.body.count})
 });
 
