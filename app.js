@@ -11,23 +11,32 @@ app.get('/', function (req, res) {
     res.send('Hello World!');
 });
 
+var collectionPromise = MongoClient.connect(url).then(function (db) {
+    return db.collection('books')
+});
+
 app.post('/stock', function (req, res) {
-    MongoClient.connect(url, function (err, db) {
-        db.collection('books').updateOne(
+    collectionPromise.then(function (collection) {
+        collection.updateOne(
             {isbn: req.body.isbn},
             {isbn: req.body.isbn, count: req.body.count},
             {upsert: true}
         );
     });
+
     res.json({isbn: req.body.isbn, count: req.body.count})
 });
 
 app.get('/stock', function (req, res) {
-    MongoClient.connect(url, function (err, db) {
-        db.collection('books').find({}).toArray(function(err, results) {
+
+    collectionPromise
+        .then(function (collection) {
+            return collection.find({}).toArray();
+        })
+        .then(function (results) {
             res.json(results);
         });
-    });
+
 });
 
 app.use(clientError);
