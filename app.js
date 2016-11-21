@@ -12,22 +12,23 @@ app.get('/', function (req, res) {
 });
 
 var collectionPromise = MongoClient.connect(url).then(function (db) {
+    //throw new Error("ayayay");
     return db.collection('books')
 });
 
-app.post('/stock', function (req, res) {
+app.post('/stock', function (req, res, next) {
     collectionPromise.then(function (collection) {
         collection.updateOne(
             {isbn: req.body.isbn},
             {isbn: req.body.isbn, count: req.body.count},
             {upsert: true}
         );
-    });
+    }).catch(next);
 
     res.json({isbn: req.body.isbn, count: req.body.count})
 });
 
-app.get('/stock', function (req, res) {
+app.get('/stock', function (req, res, next) {
 
     collectionPromise
         .then(function (collection) {
@@ -35,7 +36,8 @@ app.get('/stock', function (req, res) {
         })
         .then(function (results) {
             res.json(results);
-        });
+        })
+        .catch(next);
 
 });
 
