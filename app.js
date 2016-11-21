@@ -13,12 +13,21 @@ app.get('/', function (req, res) {
 
 app.post('/stock', function (req, res) {
     MongoClient.connect(url, function (err, db) {
-        console.log('connected to DB');
-
-        db.collection('books').updateOne({isbn: req.body.isbn}, {isbn: req.body.isbn, count: req.body.count}, {upsert: true});
-        db.close();
+        db.collection('books').updateOne(
+            {isbn: req.body.isbn},
+            {isbn: req.body.isbn, count: req.body.count},
+            {upsert: true}
+        );
     });
     res.json({isbn: req.body.isbn, count: req.body.count})
+});
+
+app.get('/stock', function (req, res) {
+    MongoClient.connect(url, function (err, db) {
+        db.collection('books').find({}).toArray(function(err, results) {
+            res.json(results);
+        });
+    });
 });
 
 app.use(clientError);
