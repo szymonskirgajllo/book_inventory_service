@@ -1,20 +1,24 @@
 var express = require('express');
 var app = express();
+var bodyParser = require('body-parser');
 
-app.use(function (req, res, next) {
-    console.log("incoming request at " + new Date());
-    next();
+app.use(bodyParser.json());
+
+app.get('/', function (req, res) {
+    res.send('Hello World!');
 });
 
-app.use(function (req, res, next) {
-    console.log("basic auth");
-    next();
+app.post('/stock', function (req, res) {
+    res.json({isbn: req.body.isbn, count: req.body.count})
 });
 
-var privateMiddleware = function (req, res, next) {
-    console.log("private middleware");
-    next();
-};
+app.use(clientError);
+app.use(serverError);
+
+app.listen(3000, function () {
+    console.log('Example app listening on port 3000!');
+});
+
 
 function clientError(req, res, next) {
     var err = new Error('Not Found');
@@ -30,15 +34,3 @@ function serverError(err, req, res, next) {
         error: (process.env.NODE_ENV === 'production') ? {} : err.stack
     });
 }
-
-app.get('/', privateMiddleware, function (req, res) {
-    throw new Error("something went wrong");
-    res.send('Hello World!');
-});
-
-app.use(clientError);
-app.use(serverError);
-
-app.listen(3000, function () {
-    console.log('Example app listening on port 3000!');
-});
