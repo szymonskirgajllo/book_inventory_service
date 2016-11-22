@@ -4,7 +4,7 @@ var url = 'mongodb://localhost:27017/bookinventory';
 var collectionPromise = MongoClient
     .connect(url, {db: {bufferMaxEntries: 0}})
     .then(function (db) {
-        return db.collection('books')
+        return db.collection('books');
     });
 
 module.exports = {
@@ -15,7 +15,7 @@ module.exports = {
                 {isbn: isbn, count: count},
                 {upsert: true}
             );
-        })
+        });
     },
     findAll: function () {
         return collectionPromise
