@@ -28,7 +28,7 @@ module.exports = function (stockRepository) {
                 catch(next);
         },
         hello: function (req, res) {
-            res.send('Hello World!');
+            res.send('Hello Pipeline!');
         }
     };
 };
